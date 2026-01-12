@@ -1,13 +1,8 @@
 # mcp-registry Header
 
-Search all instances of `mcp-registry` in this repository and replace the value there with the appropriate value.
-You should also
+This repo deploys a custom MCP Registry based on the reference implementation https://github.com/modelcontextprotocol/registry.
 
-## Template Features
+That one deploys into either GCP or as a "local" deployment with Minio, so this repo is a point-in-time conversion of their docker-compose.yml into a Kubernetes manifest, with a fixed seed data file in the [data](./data) directory
 
-This repository supports:
+The 3rd party reference implementation allows modification of MCP data stored in Postgres via admins, whereas we would like a more restrictive version changed only via Pull Request to this repo.
 
-* Clear code ownership - via CODOWNERS
-* Semantic Versioning via Conventional Commits - via workflow, .releaserc.json and empty CHANGELOG.md
-* PR labelling - config files in .gitlab directory
-* Renovate configuration using a common base configuration - renovate.json

@@ -1,0 +1,12 @@
+[
+  {
+    "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+    "name": "io.github.github/github-mcp-server",
+    "description": "Access your GitHub repos and data via MCP.",
+    "repository": {
+      "url": "https://github.com/github/github-mcp-server.git",
+      "source": "github"
+    },
+    "version": "0.28.1"
+  }
+]
