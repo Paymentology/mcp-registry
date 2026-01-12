@@ -1,0 +1,52 @@
+# This workflow will build a Java project with Gradle, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: SonarCloud Analysis
+
+env:
+  JAVA_VERSION: '17'
+  REVISION: ${{ github.ref_type == 'tag' && github.ref_name || format('{0}-SNAPSHOT', github.sha) }}
+  SKIP_TESTS_ARGS: ${{ github.ref_type == 'tag' && '-x test -Dsonar.skip=true' || '' }}
+  SONAR_ARGS: ${{ github.ref_name == github.event.repository.default_branch && ' -Dsonar.qualitygate.wait=true' || ''}}
+
+  IMAGE_CACHE_PREFIX: kuik.kuik-system.logical-stud.pt-shared-prod.paymentology.int
+
+# REPLACEME with your own events when the workflow should be triggered
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  jar-build:
+    runs-on: pt-shared-prod
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: Paymentology/sonarcloud-workflows/project-creation@main
+        name: Creates SonarCloud project
+        continue-on-error: true
+        with:
+          create-missing-project: true
+          analysis-mode: ci
+          new-code-delta: commit
+          sonar-token: ${{ secrets.SONAR_TOKEN }}
+          sonarcloud-org: ${{ github.event.organization.name == 'Paymentology' && 'paymentology' || 'tutuka-github' }}
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v6.0.0
+        if: github.ref_type != 'tag'
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            ${{env.SONAR_ARGS}}

@@ -1,0 +1,5 @@
+# Modify REPLACEME with a real team in the style @Paymentology/team-name-in-lowercase
+*       @Paymentology/REPLACEME
+sonar-project.properties @Paymentology/devsecops
+# Modify REPLACEME with a real Team Lead in the style @their-github-user
+CODEOWNERS @REPLACEME

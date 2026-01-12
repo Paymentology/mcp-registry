@@ -1,0 +1,33 @@
+# Mandatory
+name: Code Heath
+
+on:
+  workflow_dispatch:
+
+# Either Optional section 1 or Optional section 2 is required.
+# Use Optional section 1 if SC is not configured on this repo.
+# Use Optional section 2 when SC is configured and you want to wait for SonarCloud to finish before running code-health.
+
+# START Optional section 1
+  # push:
+  #   branches: [ main, master ]
+# END Optional section 1
+
+# START Optional section 2
+  # make code metrics wait for SonarCloud to finish
+  workflow_run:
+    workflows: ["Gradle Component with GHAs CI"]
+    branches: [main, master]
+    types:
+      - completed
+# END Optional section 2
+
+# Mandatory
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  code-health:
+    uses: Paymentology/code-health/.github/workflows/default-branch-workflow.yml@v1
+    secrets: inherit

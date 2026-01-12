@@ -1,0 +1,79 @@
+# This workflow is used to automatically label pull requests.
+name: PR-labeler
+
+# Concurrency ensures that only one instance of this workflow runs per pull request.
+concurrency:
+  group: ${{ github.head_ref }}-pr-labeler  # Defines a unique identifier for each group of workflow runs.
+  cancel-in-progress: true                 # Cancels any currently running workflow runs in the same group.
+
+# Permissions define what access the actions in this workflow have.
+permissions:
+  issues: write         # to be able to comment on released issues
+  pull-requests: write  # Allows the workflow to modify pull request labels.
+  contents: read        # Allows the workflow to read the repository contents.
+
+# This workflow triggers on various pull request events.
+on:
+  pull_request:
+    branches:
+      - main  # Specifies that this workflow only runs on pull requests targeting the main branch.
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+      - ready_for_review  # Specifies the types of pull request events that trigger this workflow.
+
+jobs:
+  labeler:
+    runs-on: pt-shared-prod-small
+    if: github.event.pull_request.draft == false
+    timeout-minutes: 1
+
+
+    steps:
+      - name: Generate a token
+        id: generate_token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.PTY_PR_LABELER_APP_ID }}
+          private-key: ${{ secrets.PTY_PR_LABELER_PRIVATE_KEY }}
+
+      # Uses a GitHub action to label pull requests based on their descriptions.
+      - name: Label by description
+        uses: github/issue-labeler@v3.4
+        with:
+          configuration-path: .github/labeler-description.yml
+          enable-versioned-regex: 0
+          include-title: 1
+          repo-token: "${{ steps.generate_token.outputs.token }}"
+          sync-labels: 0
+
+      # Uses another GitHub action to label pull requests based on the paths of changed files.
+      - name: Label by changed files
+        uses: actions/labeler@v6
+        with:
+          configuration-path: .github/labeler-paths.yml
+          repo-token: "${{ steps.generate_token.outputs.token }}"
+          sync-labels: true
+
+      - uses: actions/checkout@v6
+
+      # Uses a GitHub action to label pull requests based on their size.
+      - name: Label by PR size
+        uses: Paymentology/pr-size-labeler@v1
+        with:
+          GITHUB_TOKEN: "${{ steps.generate_token.outputs.token }}"
+          xs_max_size: '10'
+          s_max_size: '100'
+          m_max_size: '500'
+          l_max_size: '1000'
+          fail_if_xl: 'false'
+          message_if_xl: >
+            This PR exceeds the recommended size of 1000 lines.
+            Please make sure you are NOT addressing multiple issues with one PR.
+            Note this PR might be rejected due to its size.
+
+          # Files to ignore when calculating PR size.
+          files_to_ignore: |
+            "**.md"

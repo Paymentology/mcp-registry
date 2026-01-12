@@ -1,0 +1,8 @@
+dependencies:
+  - '(deps|dependencies)'
+
+refactor:
+  - '(refactor)'
+
+BREAKING:
+  - '(break|BREAKING)'
