@@ -1,6 +1,6 @@
-# REPLACEME Header
+# mcp-registry Header
 
-Search all instances of `REPLACEME` in this repository and replace the value there with the appropriate value.
+Search all instances of `mcp-registry` in this repository and replace the value there with the appropriate value.
 You should also
 
 ## Template Features
