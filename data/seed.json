@@ -8,5 +8,25 @@
       "source": "github"
     },
     "version": "0.28.1"
+  },
+  {
+    "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+    "name": "ai.autoblocks/contextlayer-mcp",
+    "description": "Personal context management for AI assistants",
+    "repository": {
+      "url": "https://github.com/autoblocksai/ctxl",
+      "source": "github"
+    },
+    "version": "0.0.3",
+    "packages": [
+      {
+        "registryType": "npm",
+        "identifier": "@contextlayer/mcp",
+        "version": "0.0.3",
+        "transport": {
+          "type": "stdio"
+        }
+      }
+    ]
   }
 ]
